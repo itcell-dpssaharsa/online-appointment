@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPS Saharsa ERP FINAL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<!-- LOADER -->
+<div id="loader" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden z-50">
+  <div class="bg-white p-6 rounded-xl shadow text-center">
+    <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-900 border-t-transparent mx-auto"></div>
+    <p class="mt-2">Processing...</p>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="bg-blue-900 text-white p-4 flex justify-between">
+<div class="font-bold">Online Appointment</div>
+<div class="flex gap-2">
+<button onclick="showHome()" class="bg-white text-blue-900 px-3 py-1 rounded">Home</button>
+<button onclick="showLogin()" class="bg-white text-blue-900 px-3 py-1 rounded">Login</button>
+</div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="max-w-2xl mx-auto mt-6 bg-white p-5 rounded-xl shadow">
+<h2 class="text-xl font-bold mb-4">Book Appointment</h2>
+<div class="grid grid-cols-2 gap-4">
+<button onclick="showStudent()" class="bg-blue-600 text-white p-3 rounded">Student / Parent</button>
+<button onclick="showVisitor()" class="bg-green-600 text-white p-3 rounded">Visitor</button>
+</div>
+</div>
+
+<!-- STUDENT FORM -->
+<div id="studentForm" class="hidden max-w-xl mx-auto mt-6 bg-white p-4 rounded-xl shadow">
+<h2 class="font-bold mb-2">Student Appointment</h2>
+<input id="admission" class="border p-2 w-full mb-2" placeholder="Admission No">
+<input id="s_name" class="border p-2 w-full mb-2" placeholder="Name">
+<input id="s_mobile" class="border p-2 w-full mb-2" placeholder="Mobile">
+<input id="s_email" class="border p-2 w-full mb-2" placeholder="Email">
+<textarea id="s_purpose" class="border p-2 w-full mb-2" placeholder="Purpose (min 50 chars)"></textarea>
+<input type="date" id="s_date" class="border p-2 w-full mb-2">
+<select id="s_time" class="border p-2 w-full mb-2">
+<option value="">Select Time</option>
+<option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
+<option>01:00 PM</option><option>02:00 PM</option><option>03:00 PM</option>
+</select>
+<button onclick="submitStudent()" class="bg-blue-900 text-white w-full p-2">Submit</button>
+<p id="s_receipt" class="text-green-600"></p>
+<button onclick="showHome()" class="mt-2 w-full bg-gray-300 p-2">Back</button>
+</div>
+
+<!-- VISITOR FORM -->
+<div id="visitorForm" class="hidden max-w-xl mx-auto mt-6 bg-white p-4 rounded-xl shadow">
+<h2 class="font-bold mb-2">Visitor Appointment</h2>
+<input id="v_name" class="border p-2 w-full mb-2" placeholder="Name">
+<input id="v_mobile" class="border p-2 w-full mb-2" placeholder="Mobile">
+<input id="v_email" class="border p-2 w-full mb-2" placeholder="Email">
+<textarea id="v_purpose" class="border p-2 w-full mb-2" placeholder="Purpose (min 50 chars)"></textarea>
+<input type="date" id="v_date" class="border p-2 w-full mb-2">
+<select id="v_time" class="border p-2 w-full mb-2">
+<option value="">Select Time</option>
+<option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
+<option>01:00 PM</option><option>02:00 PM</option><option>03:00 PM</option>
+</select>
+<button onclick="submitVisitor()" class="bg-green-700 text-white w-full p-2">Submit</button>
+<p id="v_receipt" class="text-green-600"></p>
+<button onclick="showHome()" class="mt-2 w-full bg-gray-300 p-2">Back</button>
+</div>
+
+<!-- LOGIN -->
+<div id="loginPage" class="hidden max-w-xl mx-auto mt-6 bg-white p-4 rounded-xl shadow">
+<h2 class="font-bold mb-2">Login</h2>
+<input id="username" class="border p-2 w-full mb-2" placeholder="Username">
+<input id="password" type="password" class="border p-2 w-full mb-2" placeholder="Password">
+<button onclick="login()" class="bg-blue-900 text-white w-full p-2">Login</button>
+<button onclick="showHome()" class="mt-2 w-full bg-gray-300 p-2">Back</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden max-w-6xl mx-auto mt-6 bg-white p-4 rounded-xl shadow">
+<div class="flex justify-between mb-3">
+<h2 class="text-xl font-bold">Dashboard</h2>
+<div class="flex gap-2">
+<button onclick="loadData()" class="bg-gray-300 px-3 py-1 rounded">Refresh</button>
+<button onclick="logout()" class="bg-red-500 text-white px-3 py-1 rounded">Logout</button>
+</div>
+</div>
+<table class="w-full text-sm border">
+<thead class="bg-gray-200">
+<tr><th>ID</th><th>Name</th><th>Date</th><th>Status</th><th>Action</th></tr>
+</thead>
+<tbody id="dataTable"></tbody>
+</table>
+</div>
+
+<h3> Managed by-  IT Department DPS Saharsa <h3>
+
+<script>
+const URL="https://script.google.com/macros/s/AKfycbwyH-R8qA1rfpBWW5LHVQ8HtLFVsWBCWpsQ1ZNfv2AI2KdLzfPESXJtnhMYynEsp725/exec";
+
+function showLoader(){ loader.classList.remove('hidden'); }
+function hideLoader(){ loader.classList.add('hidden'); }
+
+function hideAll(){ home.classList.add('hidden'); studentForm.classList.add('hidden'); visitorForm.classList.add('hidden'); loginPage.classList.add('hidden'); dashboard.classList.add('hidden'); }
+function showHome(){ hideAll(); home.classList.remove('hidden'); }
+function showLogin(){ hideAll(); loginPage.classList.remove('hidden'); }
+function showStudent(){ hideAll(); studentForm.classList.remove('hidden'); }
+function showVisitor(){ hideAll(); visitorForm.classList.remove('hidden'); }
+
+// VALIDATION
+function validate(name,mobile,email,purpose,date,time){
+ let emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+ if(!name||!mobile||!email||!purpose||!date||!time) return alert("All fields required"),false;
+ if(!emailRegex.test(email)) return alert("Invalid Email"),false;
+ if(!/^\d+$/.test(mobile)) return alert("Mobile must be numbers"),false;
+ if(purpose.length<50) return alert("Purpose must be 50+ characters"),false;
+ let d=new Date(date); if(d.getDay()==0) return alert("Sunday not allowed"),false;
+ return true;
+}
+
+function submitStudent(){
+ if(!validate(s_name.value,s_mobile.value,s_email.value,s_purpose.value,s_date.value,s_time.value)) return;
+ let id="APT"+Date.now(); showLoader();
+ fetch(URL,{method:"POST",body:JSON.stringify({action:"submit",id:id,name:s_name.value,mobile:s_mobile.value,email:s_email.value,purpose:s_purpose.value,date:s_date.value,time:s_time.value,category:"Student"})})
+ .then(()=>{s_receipt.innerText="ID: "+id; hideLoader();});
+}
+
+function submitVisitor(){
+ if(!validate(v_name.value,v_mobile.value,v_email.value,v_purpose.value,v_date.value,v_time.value)) return;
+ let id="APT"+Date.now(); showLoader();
+ fetch(URL,{method:"POST",body:JSON.stringify({action:"submit",id:id,name:v_name.value,mobile:v_mobile.value,email:v_email.value,purpose:v_purpose.value,date:v_date.value,time:v_time.value,category:"Visitor"})})
+ .then(()=>{v_receipt.innerText="ID: "+id; hideLoader();});
+}
+
+function login(){ showLoader();
+ fetch(URL,{method:"POST",body:JSON.stringify({action:"login",username:username.value,password:password.value})})
+ .then(res=>res.json())
+ .then(d=>{
+ if(d.status=="success"){
+ localStorage.setItem("login","true");
+ localStorage.setItem("role",d.role.trim());
+ showDashboard();
+ } else alert("Login Failed");
+ hideLoader();
+ });
+}
+
+function showDashboard(){ hideAll(); dashboard.classList.remove('hidden'); loadData(); }
+function logout(){ localStorage.clear(); showHome(); }
+
+function loadData(){
+ fetch(URL,{method:"POST",body:JSON.stringify({action:"get"})})
+ .then(res=>res.json())
+ .then(data=>render(data));
+}
+
+function render(data){
+ dataTable.innerHTML="";
+ let role=(localStorage.getItem("role")||"").trim();
+ data.forEach(d=>{
+ dataTable.innerHTML+=`<tr>
+ <td>${d.id}</td>
+ <td>${d.name}</td>
+ <td>${d.date}</td>
+ <td>${d.status}</td>
+ <td>${(role==='SuperAdmin'||role==='Accounts')?
+ `<button onclick="update('${d.id}','Approved')" class="bg-green-500 text-white px-2">✔</button>
+  <button onclick="update('${d.id}','Rejected')" class="bg-red-500 text-white px-2">✖</button>`
+ : 'No Access'}</td>
+ </tr>`;
+ });
+}
+
+function update(id,status){ showLoader();
+ fetch(URL,{method:"POST",body:JSON.stringify({action:"update",id:id,status:status})})
+ .then(()=>{loadData(); hideLoader();});
+}
+
+setInterval(()=>{ if(localStorage.getItem("login")) loadData(); },5000);
+</script>
+
+</body>
+</html>
